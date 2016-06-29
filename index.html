@@ -9,7 +9,9 @@
     <script src="script.js"></script>
 
   </head>
-  <body ng-app="game" ng-controller="gameCtrl">
-    
+  <body ng-app="game" ng-controller="gameCtrl" ng-keydown="keyHandler($event)" tabindex="0" ng-init="init()">
+    <div id="player"></div>
+    <div class="menus" id="options" ng-click="menuToggle(79)">Options (O)</div>
+    <div class="menus" id="inventory" ng-click="menuToggle(73)">Inventory (I)</div>
   </body>
 </html>
