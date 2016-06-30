@@ -1,7 +1,8 @@
 body {
-  position: relative;
+  position: absolute;
   background-color: green;
   overflow: hidden;
+  margin: 0;
 }
 
 #player {
@@ -20,8 +21,8 @@ body {
   height: 20px;
   width: 400px;
   text-align: center;
-  padding: 3px 3px 0 3px;
   z-index: 20;
+  padding: 3px;
 }
 
 #options {

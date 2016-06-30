@@ -7,36 +7,38 @@ angular
       $scope.getVals();
       $scope.positionMenus();
       $scope.setCreature("player");
-    }
+    };
     // Get values for window/distance
     $scope.getVals = function(){
-      $scope.windowW = $(window).width();
-      $scope.windowH = $(window).height();
+      $scope.face = ". .";
+      $scope.windowW = window.innerWidth;
+      $scope.windowH = window.innerHeight;
     };
     // Positions menus
     $scope.positionMenus = function(){
       $scope.menus = $('.menus');
       $scope.opMenu = $('#options');
       $scope.invMenu = $('#inventory');
-      $scope.menus.css({top: ($scope.windowH-35)+'px'});
+      $scope.menus.css({top: ($scope.windowH-20)+'px'});
       $scope.opMenu.css({left:(0)+'px'});
-      $scope.invMenu.css({left:($scope.windowW-415)+'px'});
+      $scope.invMenu.css({left:($scope.windowW-400)+'px'});
     };
     // Inits creature obj (can be player or enemy)
     $scope.setCreature = function(objName){
       var creature = {};
-      creature.top = 0;
-      creature.bottom = creature.top+50;
-      creature.left = 0;
-      creature.right = creature.left+50;
       creature.width = 50;
       creature.height = 50;
+      creature.top = 0;
+      creature.bottom = creature.top+creature.height;
+      creature.left = 0;
+      creature.right = creature.left+creature.width;
       creature.jq = $('#'+objName);
-      creature.dist = $scope.windowW/20;
+      creature.dist = $scope.windowW/25;
       creature.isMoving = false;
       creature.speed = 100;
       creature.facing = 2;
       creature.inventory = [];
+      // still needs health, attack, armor, etc.
       $scope[objName] = creature;
     };
     // Handles key presses
@@ -62,33 +64,53 @@ angular
         // slide options
       }
     };
-    // Checks bounds of screen
-    $scope.isIn = function(obj){
-      // should return maximum amount obj can move.
-      // takes obj.dist and finds if that max would put the obj oob/off screen
-      // if so, returns the difference that the obj is allowed to move
+    // Gets current position of object
+    $scope.getPos = function(obj){
+      obj.top = parseInt(obj.jq.css("top"));
+      obj.left = parseInt(obj.jq.css("left"));
+      obj.bottom = parseInt(obj.top)+obj.height;
+      obj.right = parseInt(obj.left)+obj.width;
 
-      var isIn = false;
-      if(ud=="-"){
-        var min = 0;
+    };
+    // Calculates distance object can move and stay in bounds
+    $scope.distance = function(obj){
+      var moveDist = obj.dist;
+      if(obj.facing>1){
+        if((obj.top-obj.dist)<0 && obj.facing==2){
+          moveDist = obj.top;
+        }
+        else if((obj.left-obj.dist)<0 && obj.facing==3){
+          moveDist = obj.left;
+        }
       }
-      else if(ud=="+"){
-        var max = tl=="top" ? $scope.windowH : $scope.windowW;
-
+      else if(obj.facing<2){
+        if((obj.bottom+obj.dist)>$scope.windowH && obj.facing===0){
+          moveDist = $scope.windowH-obj.bottom;
+        }
+        else if((obj.right+obj.dist)>$scope.windowW && obj.facing==1){
+          moveDist = $scope.windowW-obj.right;
+        }
       }
+      if(moveDist>obj.dist){moveDist=obj.dist;}
+      if(moveDist<0){moveDist=0;}
+      return moveDist;
     };
     // Moves movable objects
     $scope.move = function(i,obj){
       if (!obj.isMoving) {
         obj.isMoving = true;
         obj.facing = i;
-        i<=1 ? ud="+" : ud="-";
-        var directions = ["v",">","^","<"]
+        var ud = i<2 ? "+" : "-";
+        var directions = ["v.v",">. >","^.^","< .<"];
         var animateDir = ["top","left"];
         var moveObj = {};
-        moveObj[animateDir[i%2]] = ud+"="+obj.dist+"px";
-        obj.jq.html(directions[i])
-        obj.jq.animate(moveObj,obj.speed,function(){obj.isMoving=false});
+        moveObj[animateDir[i%2]] = ud+"="+$scope.distance(obj)+"px";
+        $scope.face = directions[i];
+        obj.jq.animate(moveObj,obj.speed);
+        setTimeout(function () {
+          $scope.getPos(obj);
+          obj.isMoving=false;
+        }, 100);
       }
     };
-  }])
+  }]);
