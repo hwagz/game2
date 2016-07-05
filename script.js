@@ -6,7 +6,18 @@ angular
     $scope.init = function(){
       $scope.getVals();
       $scope.positionMenus();
-      $scope.setCreature("player");
+      $scope.player = $scope.setCreature("player");
+      console.log($scope.player);
+      $scope.randomPos($scope.player);
+      $scope.enemies = ["e0","e1","e2"];
+      for(i=0,len=$scope.enemies.length;i<len;i++){
+        $scope.enemies[i] = $scope.setCreature($scope.enemies[i]);
+        console.log($scope.enemies[i]);
+        $('body').append("<div class='enemy' id='"+$scope.enemies[i].name+"'></div>");
+        //$scope.getPos($scope.enemies[i]);
+        console.log($scope.enemies[i]);
+        $scope.randomPos($scope.enemies[i]);
+      }
     };
     // Get values for window/distance
     $scope.getVals = function(){
@@ -26,6 +37,7 @@ angular
     // Inits creature obj (can be player or enemy)
     $scope.setCreature = function(objName){
       var creature = {};
+      creature.name = objName;
       creature.width = 50;
       creature.height = 50;
       creature.top = 0;
@@ -39,7 +51,7 @@ angular
       creature.facing = 2;
       creature.inventory = [];
       // still needs health, attack, armor, etc.
-      $scope[objName] = creature;
+      return creature;
     };
     // Handles key presses
     $scope.keyHandler = function(e){
@@ -64,13 +76,25 @@ angular
         // slide options
       }
     };
+
+    // EVERYTHING BELOW HERE NEEDS TO BE IN THE CLASS CONSTRUCTOR AS AN INSTANCE METHOD
+
     // Gets current position of object
     $scope.getPos = function(obj){
       obj.top = parseInt(obj.jq.css("top"));
       obj.left = parseInt(obj.jq.css("left"));
       obj.bottom = parseInt(obj.top)+obj.height;
       obj.right = parseInt(obj.left)+obj.width;
-
+    };
+    // Places the object at a random location on the screen
+    $scope.randomPos = function(obj){
+      var maxH = $scope.windowH-obj.height;
+      var maxW = $scope.windowW-obj.width;
+      var newTop = Math.random()*maxH;
+      var newLeft = Math.random()*maxW;
+      console.log(obj.name);
+      obj.jq.css({top:newTop,left:newLeft});
+      $scope.getPos(obj);
     };
     // Calculates distance object can move and stay in bounds
     $scope.distance = function(obj){
