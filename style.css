@@ -35,7 +35,6 @@ body {
   width: 400px;
   text-align: center;
   z-index: 20;
-  padding: 3px;
 }
 
 #options {
@@ -43,5 +42,25 @@ body {
 }
 
 #inventory {
+
+}
+
+.menuBox {
+  display: none;
+  width: 100%;
+  height: auto;
+  background-color: fuchsia;
+  z-index: 21;
+}
+
+.menuBox ul {
+  list-style: none;
+}
+
+#opBox {
+
+}
+
+#invBox {
 
 }

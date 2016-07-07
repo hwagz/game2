@@ -6,13 +6,36 @@
      <link rel="stylesheet" href="style.css" media="screen" title="no title" charset="utf-8">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="creature.js"></script>
     <script src="script.js"></script>
+
+    <link rel="icon" type="image/ico" href="https://www.angularjs.org/favicon.ico">
+
+
 
   </head>
   <body ng-app="game" ng-controller="gameCtrl" ng-cloak="" ng-keydown="keyHandler($event)" tabindex="0" ng-init="init()">
+    <!--Player Div-->
     <div id="player"><br />{{player.face}}</div>
+
+    <!--Container for all enemy divs-->
     <div class="eContainer"></div>
-    <div class="menus" id="options" ng-click="menuToggle(79)">Options (O)</div>
-    <div class="menus" id="inventory" ng-click="menuToggle(73)">Inventory (I)</div>
+
+    <!--Menus-->
+    <div class="menus" id="options" ng-click="menuToggle(79)">Options (O)
+      <div class="menuBox" id="opBox">
+        <ul>
+          <li ng-repeat="op in editOptions">{{player[op]}}</li>
+        </ul>
+      </div>
+      </div>
+    </div>
+    <div class="menus" id="inventory" ng-click="menuToggle(73)">Inventory (I)
+      <div class="menuBox" id="invBox">
+        <ul>
+          <li ng-repeat="item in player.inventory">{{item.name}} : {{item.quantity}}</li>
+        </ul>
+      </div>
+    </div>
   </body>
 </html>
