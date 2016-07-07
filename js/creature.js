@@ -12,7 +12,7 @@ function Creature(name){
   this.jq = $('#'+name);
   this.dist = window.innerWidth/25;
   this.isMoving = false;
-  this.speed = 50;
+  this.speed = name=="player" ? 50 : 100;
   this.facing = 2;
   this.inventory = [
     {
