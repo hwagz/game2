@@ -1,8 +1,13 @@
+// TODO: Class contructors and instance methods
+
 angular
   .module('game',[])
-  .controller("gameCtrl", ['$scope','$filter',function($scope, $filter) {
-    $scope.enemies = ["e0","e1","e2","e3","e4"];
-    $scope.isMoving = false;
+  .controller("gameCtrl", ['$scope','$filter','$compile',function($scope, $filter,$compile) {
+    // needs some work
+    $scope.numEnemies = 6;
+    $scope.eMoveInterval = 2000;
+    // for later pause function
+    $scope.paused = false;
     // Initialization function
     $scope.init = function(){
       $scope.getVals();
@@ -10,10 +15,10 @@ angular
       $scope.player = $scope.setCreature("player");
       $scope.randomPos($scope.player);
       $scope.createEnemies();
+      $scope.eMove();
     };
-    // Get values for window/distance
+    // Get values for window/distance, prob other things later
     $scope.getVals = function(){
-      $scope.face = ". .";
       $scope.windowW = window.innerWidth;
       $scope.windowH = window.innerHeight;
     };
@@ -28,15 +33,22 @@ angular
     };
     // Creates enemies
     $scope.createEnemies = function(){
+      var container = $('.eContainer');
+      $scope.enemies = [];
+      for(i=0;i<$scope.numEnemies;i++){
+        $scope.enemies[i]="e"+i;
+      }
       for(i=0,len=$scope.enemies.length;i<len;i++){
-        $('body').append("<div class='enemy' id='"+$scope.enemies[i]+"'></div>");
+        container.append("<div class='enemy' id='"+$scope.enemies[i]+"'>{{enemies["+i+"].face}}</div>");
         $scope.enemies[i] = $scope.setCreature($scope.enemies[i]);
         $scope.randomPos($scope.enemies[i]);
       }
+      $compile(container)($scope)
     }
     // Inits creature obj (can be player or enemy)
     $scope.setCreature = function(objName){
       var creature = {};
+      creature.face = ". .";
       creature.name = objName;
       creature.width = 50;
       creature.height = 50;
@@ -50,6 +62,7 @@ angular
       creature.speed = 100;
       creature.facing = 2;
       creature.inventory = [];
+      creature.type = objName=="player" ? "player" : "enemy";
       // still needs health, attack, armor, etc.
       return creature;
     };
@@ -69,6 +82,7 @@ angular
     // Slides menus up
     $scope.menuToggle = function(e){
       // slide menus up and down
+      console.log("Not yet implemented");
       if(e==73){
         // slide inventory
       }
@@ -76,9 +90,6 @@ angular
         // slide options
       }
     };
-
-    // EVERYTHING BELOW HERE NEEDS TO BE IN THE CLASS CONSTRUCTOR AS AN INSTANCE METHOD - which doesn't exist yet
-
     // Gets current position of object
     $scope.getPos = function(obj){
       obj.top = obj.jq.css("top").replace("px", "")*1;
@@ -99,18 +110,18 @@ angular
     $scope.distance = function(obj){
       var moveDist = obj.dist;
       if(obj.facing>1){
-        if((obj.top-obj.dist)<0 && obj.facing==2){
+        if(obj.facing==2 && (obj.top-obj.dist)<0){
           moveDist = obj.top;
         }
-        else if((obj.left-obj.dist)<0 && obj.facing==3){
+        else if(obj.facing==3 && (obj.left-obj.dist)<0){
           moveDist = obj.left;
         }
       }
       else if(obj.facing<2){
-        if((obj.bottom+obj.dist)>$scope.windowH && obj.facing===0){
+        if(obj.facing===0 && (obj.bottom+obj.dist)>$scope.windowH){
           moveDist = $scope.windowH-obj.bottom;
         }
-        else if((obj.right+obj.dist)>$scope.windowW && obj.facing==1){
+        else if(obj.facing==1 && (obj.right+obj.dist)>$scope.windowW){
           moveDist = $scope.windowW-obj.right;
         }
       }
@@ -118,7 +129,7 @@ angular
       if(moveDist<0){moveDist=0;}
       return moveDist;
     };
-    // Moves movable objects
+    // Moves creature objects
     $scope.move = function(i,obj){
       if (!obj.isMoving) {
         obj.isMoving = true;
@@ -128,7 +139,9 @@ angular
         var animateDir = ["top","left"];
         var moveObj = {};
         moveObj[animateDir[i%2]] = ud+"="+$scope.distance(obj)+"px";
-        $scope.face = directions[i];
+        // face only updating for enemies when player makes a keypress
+        // non issue after spritesheet though
+        obj.face = directions[i];
         obj.jq.animate(moveObj,obj.speed);
         setTimeout(function () {
           $scope.getPos(obj);
@@ -136,4 +149,14 @@ angular
         }, 100);
       }
     };
+    // Moves enemies on an interval
+    $scope.eMove = function(){
+      for (i = 0,len=$scope.enemies.length; i < len; i++) {
+        var j = Math.floor(Math.random()*4);
+        $scope.move(j,$scope.enemies[i])
+      }
+      setTimeout(function () {
+        $scope.eMove();
+      }, $scope.eMoveInterval);
+    }
   }]);
