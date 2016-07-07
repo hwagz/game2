@@ -1,23 +1,15 @@
 angular
   .module('game',[])
   .controller("gameCtrl", ['$scope','$filter',function($scope, $filter) {
+    $scope.enemies = ["e0","e1","e2","e3","e4"];
     $scope.isMoving = false;
     // Initialization function
     $scope.init = function(){
       $scope.getVals();
       $scope.positionMenus();
       $scope.player = $scope.setCreature("player");
-      console.log($scope.player);
       $scope.randomPos($scope.player);
-      $scope.enemies = ["e0","e1","e2"];
-      for(i=0,len=$scope.enemies.length;i<len;i++){
-        $scope.enemies[i] = $scope.setCreature($scope.enemies[i]);
-        console.log($scope.enemies[i]);
-        $('body').append("<div class='enemy' id='"+$scope.enemies[i].name+"'></div>");
-        //$scope.getPos($scope.enemies[i]);
-        console.log($scope.enemies[i]);
-        $scope.randomPos($scope.enemies[i]);
-      }
+      $scope.createEnemies();
     };
     // Get values for window/distance
     $scope.getVals = function(){
@@ -34,6 +26,14 @@ angular
       $scope.opMenu.css({left:(0)+'px'});
       $scope.invMenu.css({left:($scope.windowW-400)+'px'});
     };
+    // Creates enemies
+    $scope.createEnemies = function(){
+      for(i=0,len=$scope.enemies.length;i<len;i++){
+        $('body').append("<div class='enemy' id='"+$scope.enemies[i]+"'></div>");
+        $scope.enemies[i] = $scope.setCreature($scope.enemies[i]);
+        $scope.randomPos($scope.enemies[i]);
+      }
+    }
     // Inits creature obj (can be player or enemy)
     $scope.setCreature = function(objName){
       var creature = {};
@@ -77,14 +77,14 @@ angular
       }
     };
 
-    // EVERYTHING BELOW HERE NEEDS TO BE IN THE CLASS CONSTRUCTOR AS AN INSTANCE METHOD
+    // EVERYTHING BELOW HERE NEEDS TO BE IN THE CLASS CONSTRUCTOR AS AN INSTANCE METHOD - which doesn't exist yet
 
     // Gets current position of object
     $scope.getPos = function(obj){
-      obj.top = parseInt(obj.jq.css("top"));
-      obj.left = parseInt(obj.jq.css("left"));
-      obj.bottom = parseInt(obj.top)+obj.height;
-      obj.right = parseInt(obj.left)+obj.width;
+      obj.top = obj.jq.css("top").replace("px", "")*1;
+      obj.left = obj.jq.css("left").replace("px", "")*1;
+      obj.bottom = obj.top+obj.height;
+      obj.right = obj.left+obj.width;
     };
     // Places the object at a random location on the screen
     $scope.randomPos = function(obj){
@@ -92,7 +92,6 @@ angular
       var maxW = $scope.windowW-obj.width;
       var newTop = Math.random()*maxH;
       var newLeft = Math.random()*maxW;
-      console.log(obj.name);
       obj.jq.css({top:newTop,left:newLeft});
       $scope.getPos(obj);
     };

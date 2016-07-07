@@ -22,6 +22,8 @@ body {
   text-align: center;
   z-index: 4;
   color: black;
+  top: 0;
+  left: 0;
 }
 
 .menus {
