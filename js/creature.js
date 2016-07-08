@@ -1,6 +1,7 @@
 // Creature class file.
 
 function Creature(name){
+  // Basic vars
   this.face = ". .";
   this.name = name;
   this.width = 50;
@@ -12,15 +13,18 @@ function Creature(name){
   this.jq = $('#'+name);
   this.dist = window.innerWidth/25;
   this.isMoving = false;
-  this.speed = name=="player" ? 50 : 100;
   this.facing = 2;
   this.inventory = [
     {
       name: "potion",
-      quantity: 5
+      quantity: 5,
     }
   ];
   this.type = name=="player" ? "player" : "enemy";
+
+  // Gameplay-relevant vars
+  this.health = 10;
+  this.speed = name=="player" ? 50 : 100;
 
   // Updates the objects location
   this.getPos = function(){
@@ -82,4 +86,8 @@ function Creature(name){
       }, this.speed);
     }
   };
+  // Attacks
+  this.attack = function(){
+    console.log("Not yet implemented");
+  }
 }

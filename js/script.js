@@ -6,7 +6,7 @@ angular
     // needs some work
     $scope.numEnemies = 6;
     $scope.eMoveInterval = 2000;
-    $scope.editOptions = ["speed","facing"];
+    $scope.editOptions = ["speed","facing","numEnemies","eMoveInterval"];
     // for later pause function
     $scope.paused = false;
     // Initialization function
@@ -48,15 +48,24 @@ angular
     }
     // Handles key presses
     $scope.keyHandler = function(e){
+      console.log(e);
       e = e.keyCode;
-      //console.log(e);
+      console.log(e);
       if(e>=37 && e<=40){
         // down: 40, right: 39, up: 38, left: 37
-        $scope.player.move(40-e);
+        if (!$scope.paused) {
+            $scope.player.move(40-e);
+        }
+      }
+      else if(e==32){
+        $scope.player.attack();
       }
       else if(e==73 || e==79){
         // I: 73, O: 79
         $scope.menuToggle(e);
+      }
+      else if(e==80){
+        $scope.pauseToggle();
       }
     };
     // Slides menus up
@@ -69,14 +78,33 @@ angular
         $('#opBox').slideToggle();
       }
     };
+    // Pauses the game
+    $scope.pauseToggle = function(){
+      $scope.paused=!$scope.paused;
+      if(!$scope.paused){
+        $scope.eMove();
+      }
+    }
     // Moves enemies on an interval
     $scope.eMove = function(){
       for (i = 0,len=$scope.enemies.length; i < len; i++) {
         var j = Math.floor(Math.random()*4);
         $scope.enemies[i].move(j)
       }
-      setTimeout(function () {
-        $scope.eMove();
-      }, $scope.eMoveInterval);
+      if (!$scope.paused) {
+        setTimeout(function () {
+          $scope.eMove();
+        }, $scope.eMoveInterval);
+      }
     }
-  }]);
+    $scope.save = function(){
+      // patch player obj to API
+      console.log("Not yet implemented");
+      console.log($scope.player);
+    }
+  }])
+  .filter('capitalize', function() {
+    return function(input) {
+      return (!!input) ? input.charAt(0).toUpperCase() + input.substr(1) : '';
+    }
+})

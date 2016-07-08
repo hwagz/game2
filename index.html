@@ -15,6 +15,7 @@
 
   </head>
   <body ng-app="game" ng-controller="gameCtrl" ng-cloak="" ng-keydown="keyHandler($event)" tabindex="0" ng-init="init()">
+    <!--ng-click="keyHandler($event)"-->
     <!--Player Div-->
     <div id="player"><br />{{player.face}}</div>
 
@@ -24,8 +25,11 @@
     <!--Menus-->
     <div class="menus" id="options" ng-click="menuToggle(79)">Options (O)
       <div class="menuBox" id="opBox">
+        <!--Needs some work-->
         <ul>
-          <li ng-repeat="op in editOptions">{{player[op]}}</li>
+          <li ng-click="pauseToggle()">Pause (P)</li>
+          <li ng-click="save()">Save</li>
+          <li ng-repeat="op in editOptions">{{op | capitalize}}: {{player[op]}}</li>
         </ul>
       </div>
       </div>
@@ -33,7 +37,7 @@
     <div class="menus" id="inventory" ng-click="menuToggle(73)">Inventory (I)
       <div class="menuBox" id="invBox">
         <ul>
-          <li ng-repeat="item in player.inventory">{{item.name}} : {{item.quantity}}</li>
+          <li ng-repeat="item in player.inventory">{{item.name | capitalize}}: {{item.quantity}}</li>
         </ul>
       </div>
     </div>
