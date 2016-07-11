@@ -1,5 +1,3 @@
-// TODO: Class contructors and instance methods
-
 angular
   .module('game',[])
   .controller("gameCtrl", ['$scope','$filter','$compile',function($scope, $filter,$compile) {
@@ -71,18 +69,17 @@ angular
     // Slides menus up
     $scope.menuToggle = function(e){
       // slide menus up and down
-      if(e==73){
-        $('#invBox').slideToggle();
-      }
-      else if(e==79){
-        $('#opBox').slideToggle();
-      }
+      var menuDiv = e==73 ? $('#invBox') : $('#opBox');
+      menuDiv.slideToggle();
     };
     // Pauses the game
     $scope.pauseToggle = function(){
       $scope.paused=!$scope.paused;
       if(!$scope.paused){
         $scope.eMove();
+      }
+      else {
+        clearTimeout($scope.eMoveTimeout);
       }
     }
     // Moves enemies on an interval
@@ -91,11 +88,9 @@ angular
         var j = Math.floor(Math.random()*4);
         $scope.enemies[i].move(j)
       }
-      if (!$scope.paused) {
-        setTimeout(function () {
-          $scope.eMove();
-        }, $scope.eMoveInterval);
-      }
+      $scope.eMoveTimeout = setTimeout(function () {
+        $scope.eMove();
+      }, $scope.eMoveInterval);
     }
     $scope.save = function(){
       // patch player obj to API
